@@ -53,8 +53,6 @@ export default class Todo extends Component {
 
   // call the server api to get all todo items (of the logged in user)
   getTodos = async (e) => {
-    console.log('Got to getTodos. this.props.username is: ', this.props.username);
-    
     try {
       const todos = await fetch('https://big-todo-server.herokuapp.com/api/todos', {
         headers: {

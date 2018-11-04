@@ -13,14 +13,10 @@ class App extends Component {
     };
     this.child = React.createRef(); 
   }
-  // resing child reference to call getTodo function.
-  callChildGetTodos = (e) => {
-    this.child.current.getTodos();
-  }
 
-  // ensure setState is complete prior to calling child function
-  componentDidUpdate() {
-    this.callChildGetTodos();
+  // using child reference to call getTodo function.
+  callChildGetTodos = () => {
+    this.child.current.getTodos();
   }
 
   render() {
@@ -29,12 +25,14 @@ class App extends Component {
         <Navbar color="light" light expand="md">
           <NavbarBrand href="/" image-src="/public/images" ></NavbarBrand>
             <Nav className="ml-auto" navbar>      
-              { /* onClick: setState of user, then call getTodos function. allows for 1-click switching of users (mock login) */ }
-              <Button color="secondary" onClick={(e) => {this.setState({username:"mario"}); this.callChildGetTodos()}}> Mario </Button>
-              <Button color="secondary" onClick={(e) => {this.setState({username:"maria"}); this.callChildGetTodos()}}> Maria </Button>
+              { /* onClick: set username state, then call getTodos function. allows for 1-click switching of users (mock login) */ }
+              <Button color="secondary" onClick={(e) => this.setState({username:"mario"}, this.callChildGetTodos)}> Mario </Button>
+              <Button color="secondary" onClick={(e) => this.setState({username:"maria"}, this.callChildGetTodos)}> Mario </Button>
             </Nav>
         </Navbar>
-        <Todo ref={this.child} username={this.state.username}/>
+        { /* display Todo component only if username is set (mock user is logged in) */}
+        {this.state.username !== '' ? <Todo ref={this.child} username={this.state.username}/> : null}
+        
       </div>
     );
   }
