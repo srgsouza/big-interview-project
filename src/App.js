@@ -1,46 +1,40 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import NavbarComponent from './Navbar/navbar.js';
-import {Button} from 'reactstrap';
+import { Button, Navbar, NavbarBrand, Nav } from 'reactstrap';
+import Todo from './Todo/Todo'
 
 class App extends Component {
   constructor() {
-    super();
+    super(); 
     this.state = {
-      username: null,
-      user_id: null,
-      todo: '',
-      todo_id: '',
-      completed: ''
+      // using mock authentication throughout program - for demo purposes only
+      username: '',
     };
+    this.child = React.createRef(); 
   }
-  
-  setUser = (e) => {  
-    this.setState({
-      username: e.username,
-      user_id: e.user_id
-    });
+  // resing child reference to call getTodo function.
+  callChildGetTodos = (e) => {
+    this.child.current.getTodos();
   }
 
-  handleChange = (e) => {
-    this.setState({
-      [e.currentTarget.name]: e.currentTarget.value
-    });
-  }
-
-  handleSubmit = (e) => {    
-    e.preventDefault();
-     console.log('handleSubmit is called');
+  // ensure setState is complete prior to calling child function
+  componentDidUpdate() {
+    this.callChildGetTodos();
   }
 
   render() {
     return (
       <div className="App">
-        <NavbarComponent username={this.state.username} setUser={this.setUser} handleChange={this.handleChange} handleSubmit={this.handleSubmit} />
-          {this.state.username}
-          {' '}
-          {this.state.user_id}      
+        <Navbar color="light" light expand="md">
+          <NavbarBrand href="/" image-src="/public/images" ></NavbarBrand>
+            <Nav className="ml-auto" navbar>      
+              { /* onClick: setState of user, then call getTodos function. allows for 1-click switching of users (mock login) */ }
+              <Button color="secondary" onClick={(e) => {this.setState({username:"mario"}); this.callChildGetTodos()}}> Mario </Button>
+              <Button color="secondary" onClick={(e) => {this.setState({username:"maria"}); this.callChildGetTodos()}}> Maria </Button>
+            </Nav>
+        </Navbar>
+        <Todo ref={this.child} username={this.state.username}/>
       </div>
     );
   }
