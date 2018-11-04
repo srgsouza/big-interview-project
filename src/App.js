@@ -24,10 +24,11 @@ class App extends Component {
       <div className="App">
         <Navbar color="light" light expand="md">
           <NavbarBrand href="/" image-src="/public/images" ></NavbarBrand>
+          Todo CRUD Demo - Click on a mock user to login
             <Nav className="ml-auto" navbar>      
               { /* onClick: set username state, then call getTodos function. allows for 1-click switching of users (mock login) */ }
               <Button color="secondary" onClick={(e) => this.setState({username:"mario"}, this.callChildGetTodos)}> Mario </Button>
-              <Button color="secondary" onClick={(e) => this.setState({username:"maria"}, this.callChildGetTodos)}> Mario </Button>
+              <Button color="secondary" onClick={(e) => this.setState({username:"maria"}, this.callChildGetTodos)}> Maria </Button>
             </Nav>
         </Navbar>
         { /* display Todo component only if username is set (mock user is logged in) */}

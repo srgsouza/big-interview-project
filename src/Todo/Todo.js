@@ -124,6 +124,7 @@ export default class Todo extends Component {
           <span>Task: {todo.text}</span> {'  '}
           <span>Completed: { String(todo.completed)}</span> {'  '}
           <Button onClick={e => this.prepForEditTodo({todoId: todo._id})}>Edit</Button>
+          <span>  </span>
           <Button onClick={e => this.deleteTodo({todoId: todo._id})}>Delete</Button>
         </li>
       )
@@ -131,14 +132,19 @@ export default class Todo extends Component {
     return (
       <div>  
         { /* form to add new todos */ }
+        <h3> {this.props.username}'s todos</h3>
         <form onSubmit={this.addTodo}>       
           <input type="text" name="todoText" value={this.state.todoText} onChange={this.handleChange} />
           <Button type="Submit" color="primary">Add Todo</Button>
-        </form>  
+        </form> 
+        <br />
+        <br /> 
         { /* list of todos */ }
         <ul>
           {todoList}
         </ul>
+        <br />
+        <br />
         { /* display form to edit todo when edit button is clicked  */ }
         {this.state.showEditForm ? <TodoEdit editTodo={this.editTodo} handleChange={this.handleChange} todoToBeEdited={this.state.todoToBeEdited} /> : null}
       </div>
