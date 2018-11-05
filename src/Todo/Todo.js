@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Button } from 'reactstrap';
+import { Button, CardHeader, CardTitle, Container, Col, Form, Input, ListGroup, ListGroupItem, Row} from 'reactstrap';
+
 import TodoEdit from './TodoEdit';
 
 export default class Todo extends Component {
@@ -15,9 +16,17 @@ export default class Todo extends Component {
         id: '',
         text: '',
         completed: '',
-      }
+      },
+      isOpen: false
     };
+    // this.toggle = this.toggle.bind(this);
   }
+
+  // toggle = () => {
+  //   this.setState({
+  //     isOpen: !this.state.isOpen
+  //   })
+  // }
 
   // handle input changes and set state accordingly
   handleChange = (e) => {
@@ -86,11 +95,10 @@ export default class Todo extends Component {
     }
   }
   
-  // identify todo to be edited and set state accordingly, signal to show edit form
+  // identify todo to be edited and set state accordingly
   prepForEditTodo = (e) => {
     const editTodo = this.state.todos.find((todo) => todo._id === e.todoId);
     this.setState({
-      showEditForm: true,
       todoToBeEdited: editTodo
     })
   }
@@ -107,9 +115,6 @@ export default class Todo extends Component {
           'x-auth': this.props.username
         }
       })
-      this.setState({
-        showEditForm: false
-      })
       this.getTodos(e);
     } catch (error) {
       console.log(error);
@@ -117,37 +122,63 @@ export default class Todo extends Component {
   }
 
   render() {
-    // build a list of todos
-    const todoList = this.state.todos.map((todo, index) => {      
-      return (
-        <li key={todo._id}>
-          <span>Task: {todo.text}</span> {'  '}
-          <span>Completed: { String(todo.completed)}</span> {'  '}
-          <Button onClick={e => this.prepForEditTodo({todoId: todo._id})}>Edit</Button>
-          <span>  </span>
-          <Button onClick={e => this.deleteTodo({todoId: todo._id})}>Delete</Button>
-        </li>
+    // build a list of todos (not completed)
+    const notCompletedTodoList = this.state.todos.map((todo, index) => {      
+      return ( todo.completed === false ?
+        <ListGroupItem key={todo._id}>
+          <CardTitle>{todo.text}</CardTitle>   
+          { /* render TodoEdit component - pass functions and variables for the edit operation */}       
+          <TodoEdit prepForEditTodo={this.prepForEditTodo} editTodo={this.editTodo} handleChange={this.handleChange} todoToBeEdited={this.state.todoToBeEdited} todo_id={todo._id}/>
+          <Button outline color="danger" size="sm" onClick={e => this.deleteTodo({todoId: todo._id})}>Delete</Button>
+        </ListGroupItem>
+        : null
       )
     })
+    // build a list of todos (completed)
+    const completedTodoList = this.state.todos.map((todo, index) => {      
+      return ( todo.completed === true ?
+        <ListGroupItem key={todo._id}>
+          <CardTitle>{todo.text}</CardTitle>
+          { /* render TodoEdit component - pass functions and variables for the edit operation */ }
+          <TodoEdit prepForEditTodo={this.prepForEditTodo} editTodo={this.editTodo} handleChange={this.handleChange} todoToBeEdited={this.state.todoToBeEdited} todo_id={todo._id}/>
+          <Button outline color="danger" size="sm" onClick={e => this.deleteTodo({todoId: todo._id})}>Delete</Button>
+        </ListGroupItem>
+        : null
+      )
+    })
+
     return (
-      <div>  
+      <Container>  
         { /* form to add new todos */ }
-        <h3> {this.props.username}'s todos</h3>
-        <form onSubmit={this.addTodo}>       
-          <input type="text" name="todoText" value={this.state.todoText} onChange={this.handleChange} />
-          <Button type="Submit" color="primary">Add Todo</Button>
-        </form> 
-        <br />
+        <Row>
+          <Col>
+            <h3> {this.props.username}'s todo list</h3>
+            { /* form for adding todos */ }
+            <Form onSubmit={this.addTodo}>       
+              <Input type="text" name="todoText" value={this.state.todoText} onChange={this.handleChange} placeholder="Enter a new todo item" />
+              <Button type="Submit" color="primary">Add Todo</Button>
+            </Form> 
+          </Col>
+        </Row>
         <br /> 
-        { /* list of todos */ }
-        <ul>
-          {todoList}
-        </ul>
-        <br />
-        <br />
-        { /* display form to edit todo when edit button is clicked  */ }
-        {this.state.showEditForm ? <TodoEdit editTodo={this.editTodo} handleChange={this.handleChange} todoToBeEdited={this.state.todoToBeEdited} /> : null}
-      </div>
+        <Row>
+          <Col> 
+            { /* render list of todo items - pending todos */ }
+            <ListGroup>
+            <CardHeader tag="h4"> Pending Items </CardHeader>
+              {notCompletedTodoList}
+            </ListGroup>
+
+          </Col>
+          <Col>
+            { /* render list of todo items - completed todos */ }
+            <ListGroup>
+            <CardHeader tag="h4"> Completed Items </CardHeader>
+              {completedTodoList}
+            </ListGroup>
+          </Col>
+        </Row>
+      </Container>
     );
   }
 }
